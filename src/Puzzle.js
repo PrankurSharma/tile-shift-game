@@ -194,10 +194,19 @@ export default function Puzzle({ size }) {
   function isSolvable(tiles) {
     const width = 4;
     let inversions = 0;
+    let blankRow = 0; //row at which blank tile is present
+    let row = 0; // row number
+
 
     //count the no of inversions(wrongly ordered elements)
     for (let i = 0; i < tiles.length - 1; i++) {
-      if (tiles[i] === null) continue; // Skip the empty tile
+      if(i % width === 0) {
+        row++;
+      }
+      if (tiles[i] === null) {
+        blankRow = row;
+        continue;
+      } // Skip the empty tile
       for (let j = i + 1; j < tiles.length; j++) {
         if (tiles[j] !== null && tiles[i] > tiles[j]) {
           inversions++;
@@ -205,11 +214,21 @@ export default function Puzzle({ size }) {
       }
     }
 
-    //if board is even(4x4), the number of inversion should be odd and vice versa to make the configuration solvable.
-    return (
-      (width % 2 === 0 && inversions % 2 !== 0) ||
-      (width % 2 === 1 && inversions % 2 === 0)
-    );
+    //if board is even(4x4), the blank cell on the even row from top and no of inversions is even, the board becomes solvable
+    //otherwise, if blank cell is on the odd row from top, no of inversions should be odd.
+    
+    //For odd board, the no of inversions must be even
+    if(width % 2 === 0) {
+      if(blankRow % 2 === 0) {
+        return inversions % 2 === 0;
+      }
+      else {
+        return inversions % 2 !== 0;
+      }
+    }
+    else {
+      return inversions % 2 === 0;
+    }
   }
 
   //this useeffect calls the function to check if the tiles are solvable. The portion commented out also checks for solvable board by using the alternative function.

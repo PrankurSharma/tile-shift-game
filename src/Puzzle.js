@@ -335,6 +335,7 @@ export default function Puzzle({ size }) {
             setTimeout(() => {
               shuffle(tiles);
               setTiles([...tiles]);
+              setVisited(new Set());
             }, 1000);
           }}
         >
